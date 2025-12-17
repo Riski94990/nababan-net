@@ -2,300 +2,438 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FF Diamond Generator - Sapphire Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PULSA REWARDS ID - Panel Klaim Resmi</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
+        /* --- CUSTOM CSS CORE --- */
         :root {
-            --accent: #3b82f6; /* Electric Blue */
-            --accent-glow: rgba(59, 130, 246, 0.5);
-            --bg-dark: #020617; /* Deep Black Blue */
+            --primary: #0070f3;
+            --accent: #00dfd8;
+            --dark-bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--dark-bg);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
-            font-family: 'Rajdhani', sans-serif;
-            color: #e2e8f0;
+                radial-gradient(at 0% 0%, rgba(0, 112, 243, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 223, 216, 0.1) 0px, transparent 50%);
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
+            margin: 0;
         }
 
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-mono { font-family: 'Space Grotesk', sans-serif; }
 
+        /* --- UI COMPONENTS --- */
         .glass {
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--card-bg);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
         }
 
-        .diamond-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .op-card {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .diamond-card:hover {
-            transform: scale(1.05);
+        .op-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 0;
+        }
+
+        .op-card.selected {
             border-color: var(--accent);
-            box-shadow: 0 0 25px var(--accent-glow);
-            background: rgba(59, 130, 246, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 223, 216, 0.2);
         }
 
-        .diamond-card.active {
-            border: 2px solid var(--accent);
-            background: rgba(59, 130, 246, 0.2);
-            box-shadow: 0 0 30px var(--accent-glow);
+        .op-card.selected::before { opacity: 0.1; }
+
+        .op-card img {
+            z-index: 1;
+            position: relative;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
-        .blue-glow-text {
-            text-shadow: 0 0 10px var(--accent-glow);
+        .btn-glow {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 0 20px rgba(0, 112, 243, 0.4);
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transition: all 0.3s;
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent, rgba(255,255,255,0.2));
+            transform: rotate(45deg);
+            animation: move-light 3s infinite;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            filter: brightness(1.2);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-2px);
+        @keyframes move-light {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
         }
 
-        .progress-fill {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
-            box-shadow: 0 0 10px #3b82f6;
+        /* --- ANTI-LAG ANIMATIONS --- */
+        .step-transition {
+            will-change: transform, opacity;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        .loader-blue {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.2);
-            border-top: 3px solid #3b82f6;
+        .hide-step {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+        }
+
+        .show-step {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+        }
+
+        /* --- PROGRESS LOADER --- */
+        .circle-loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-left: 4px solid var(--accent);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Scanning Line Animation */
-        .scan-line {
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.5;
-            box-shadow: 0 0 10px var(--accent);
-            animation: scan 3s linear infinite;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
+        /* --- FAKE TERMINAL --- */
+        #terminal {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            color: #10b981;
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 12px;
+            height: 120px;
+            overflow-y: hidden;
+            border-left: 2px solid var(--primary);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen flex flex-col items-center">
 
-    <header class="w-full max-w-4xl mt-10 mb-12 text-center animate__animated animate__fadeIn">
-        <div class="inline-block px-4 py-1 border border-blue-500/30 rounded-full text-blue-400 text-xs tracking-widest mb-4 bg-blue-500/5">
-            SERVER STATUS: ONLINE
+    <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600 z-[100]"></div>
+
+    <nav class="w-full max-w-lg px-6 py-6 flex justify-between items-center animate__animated animate__fadeInDown">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 glass flex items-center justify-center border-blue-500/30">
+                <span class="text-xl font-black text-blue-500 italic">P</span>
+            </div>
+            <div>
+                <h1 class="text-sm font-extrabold tracking-widest uppercase italic">PULSA<span class="text-cyan-400">FREE</span></h1>
+                <p class="text-[8px] text-slate-500 font-bold tracking-[0.3em]">REWARDS SYSTEM IDN</p>
+            </div>
         </div>
-        <h1 class="text-5xl md:text-7xl font-orbitron font-black text-white italic tracking-tighter">
-            FREE <span class="text-blue-500 blue-glow-text">FIRE</span>
-        </h1>
-        <p class="text-blue-200/50 mt-2 font-light tracking-[0.3em] text-sm">DIAMOND GENERATOR 2025 • V.2.0</p>
-    </header>
+        <div class="px-4 py-1.5 glass rounded-full flex items-center gap-2 border-white/5 bg-slate-900/40">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></span>
+            <span class="text-[9px] font-bold text-slate-300">LIVE SERVER</span>
+        </div>
+    </nav>
 
-    <main class="w-full max-w-2xl relative">
-        <div class="scan-line"></div>
+    <main class="w-full max-w-lg px-6 mt-4 flex-grow">
         
-        <section id="step1" class="glass p-8 animate__animated animate__fadeInLeft">
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
-                <span class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-sm italic">01</span>
-                VERIFIKASI AKUN
-            </h2>
-            
-            <div class="space-y-5">
-                <div>
-                    <label class="text-xs text-blue-400 uppercase font-bold ml-1">Player ID / Username</label>
-                    <input type="text" id="userid" placeholder="Masukkan ID Game..." 
-                           class="w-full bg-slate-900/50 border border-blue-500/20 p-4 rounded-xl focus:outline-none focus:border-blue-500 text-white placeholder:text-slate-600 transition-all">
+        <div class="glass p-6 mb-8 text-center animate__animated animate__zoomIn border-blue-500/20">
+            <p class="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-1">Total Saldo Terdistribusi</p>
+            <h2 id="total-claimed" class="text-3xl font-black text-white italic">Rp 4.520.000</h2>
+            <div class="flex justify-center gap-4 mt-3">
+                <div class="flex items-center gap-1">
+                    <span class="text-green-500 text-xs">●</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase">Online: 1,402</span>
                 </div>
+                <div class="flex items-center gap-1">
+                    <span class="text-blue-500 text-xs">●</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase">Klaim: 89%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative min-h-[450px]">
+            
+            <section id="step-1" class="step-transition show-step glass p-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3 italic">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-xs font-black shadow-lg shadow-blue-500/30">01</span>
+                    VALIDASI NOMOR
+                </h3>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="platform" class="bg-slate-900/50 border border-blue-500/20 p-4 rounded-xl focus:outline-none focus:border-blue-500 text-sm">
-                        <option value="android">ANDROID</option>
-                        <option value="ios">IOS / APPLE</option>
-                    </select>
-                    <button onclick="validateStep1()" class="btn-primary text-white font-bold rounded-xl uppercase tracking-tighter italic">
-                        Hubungkan
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Masukan Nomor Handphone</label>
+                        <input type="number" id="phone-input" placeholder="08xxxxxxxxxx" 
+                               class="w-full bg-slate-950/50 border border-white/5 p-5 rounded-2xl text-xl font-bold text-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 ml-1">Pilih Provider Seluler</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div onclick="selectProvider(this, 'Telkomsel')" class="op-card glass p-4 rounded-2xl border-white/5 flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Telkomsel_2021_icon.svg" class="h-8 mb-2" alt="Tsel">
+                                <span class="text-[10px] font-black uppercase tracking-tighter">Telkomsel</span>
+                            </div>
+                            <div onclick="selectProvider(this, 'Axis')" class="op-card glass p-4 rounded-2xl border-white/5 flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Axis_logo_2014.svg" class="h-8 mb-2" alt="Axis">
+                                <span class="text-[10px] font-black uppercase tracking-tighter">AXIS</span>
+                            </div>
+                            <div onclick="selectProvider(this, 'Indosat')" class="op-card glass p-4 rounded-2xl border-white/5 flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Indosat_Ooredoo_logo.svg" class="h-8 mb-2" alt="Indosat">
+                                <span class="text-[10px] font-black uppercase tracking-tighter">Indosat</span>
+                            </div>
+                            <div onclick="selectProvider(this, 'XL')" class="op-card glass p-4 rounded-2xl border-white/5 flex flex-col items-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/XL_Axiata_logo_2016.svg" class="h-8 mb-2" alt="XL">
+                                <span class="text-[10px] font-black uppercase tracking-tighter">XL Axiata</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="gotoStep2()" class="w-full btn-glow py-5 rounded-2xl text-white font-black text-lg uppercase italic tracking-tighter">
+                        PROSES KLAIM SEKARANG
                     </button>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="step2" class="hidden glass p-8 animate__animated animate__fadeInRight">
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-3 italic">
-                <span class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-sm">02</span>
-                PILIH JUMLAH DIAMOND
-            </h2>
+            <section id="step-2" class="step-transition hide-step glass p-10 text-center">
+                <div class="circle-loader mx-auto mb-8"></div>
+                <h3 class="text-2xl font-black mb-2 italic">PROCESSING...</h3>
+                <p class="text-slate-400 text-xs mb-8">Mohon tunggu, sistem sedang memverifikasi data nomor dan ketersediaan kuota.</p>
+                
+                <div id="terminal">
+                    </div>
+                
+                <div class="w-full bg-slate-900 rounded-full h-1 mt-8 overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-cyan-400 w-0 transition-all duration-300"></div>
+                </div>
+            </section>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div onclick="selectDiamond(this, 355)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer relative">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl">355</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Basic Pack</p>
+            <section id="step-3" class="step-transition hide-step glass p-8 text-center border-green-500/20">
+                <div class="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-green-500/20">
+                    <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
                 </div>
-                <div onclick="selectDiamond(this, 720)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl">720</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Pro Pack</p>
+                <h3 class="text-3xl font-black mb-2 italic tracking-tight">KLAIM PENDING!</h3>
+                <p class="text-slate-400 text-xs px-2 leading-relaxed mb-6">Sistem mendeteksi aktivitas mencurigakan. Klik tombol di bawah untuk membuktikan anda bukan bot agar Pulsa 100K segera dikirim ke:</p>
+                
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-white/5 mb-8">
+                    <span id="final-phone" class="text-2xl font-black text-cyan-400 tracking-widest">08123456789</span>
+                    <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Status: Antrian Terverifikasi</p>
                 </div>
-                <div onclick="selectDiamond(this, 1450)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl text-blue-400">1.450</p>
-                    <p class="text-[10px] text-blue-100 font-bold uppercase">Hot Deal</p>
-                </div>
-                <div onclick="selectDiamond(this, 2180)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer border-blue-500/40">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl">2.180</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Sultan</p>
-                </div>
-                <div onclick="selectDiamond(this, 7290)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl">7.290</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Extreme</p>
-                </div>
-                <div onclick="selectDiamond(this, 15000)" class="diamond-card p-5 rounded-2xl text-center cursor-pointer border-blue-400/20">
-                    <div class="text-3xl mb-1">💎</div>
-                    <p class="font-black text-xl text-blue-400">15.000</p>
-                    <p class="text-[10px] text-red-500 font-bold uppercase">Limitless</p>
-                </div>
-            </div>
 
-            <button id="gen-btn" onclick="startProcess()" disabled class="w-full mt-8 py-4 bg-slate-800 text-slate-500 font-black rounded-xl uppercase tracking-widest cursor-not-allowed transition-all italic">
-                MULAI INJEKSI DIAMOND
-            </button>
-        </section>
-
-        <section id="step3" class="hidden glass p-6 overflow-hidden">
-            <div class="font-mono text-[11px] h-60 overflow-y-auto space-y-1 mb-4 scrollbar-hide" id="logs">
+                <button onclick="finalVerification()" class="w-full btn-glow py-5 rounded-2xl text-white font-black text-xl italic uppercase tracking-tighter mb-4">
+                    VERIFIKASI & TERIMA PULSA
+                </button>
+                
+                <div class="flex items-center justify-center gap-2 opacity-50">
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Aktivasi ID: REW-99120-X</span>
                 </div>
-            <div class="w-full bg-slate-900 rounded-full h-1.5">
-                <div id="bar" class="progress-fill h-full w-0 transition-all"></div>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <section id="step4" class="hidden glass p-8 text-center animate__animated animate__zoomIn">
-            <div class="w-20 h-20 bg-blue-500/20 border-2 border-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10 text-blue-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
-            </div>
-            <h3 class="text-2xl font-bold mb-2">VERIFIKASI DIPERLUKAN</h3>
-            <p class="text-sm text-slate-400 mb-6 px-4">Selesaikan langkah terakhir untuk memvalidasi bahwa Anda bukan bot. Diamond akan dikirim otomatis ke <span id="target-id" class="text-blue-400 font-bold"></span>.</p>
-            
-            <button onclick="window.location.reload()" class="w-full btn-primary py-4 rounded-xl font-bold text-lg mb-4">
-                VERIFIKASI SEKARANG
-            </button>
-            <div class="flex items-center justify-center gap-2 text-[10px] text-slate-500">
-                <span class="flex h-2 w-2 rounded-full bg-green-500"></span>
-                SISTEM SIAP MENGIRIM DIAMOND
-            </div>
-        </section>
+        <div class="mt-10 mb-10 animate__animated animate__fadeInUp">
+            <h4 class="text-center text-[9px] font-bold text-slate-600 uppercase tracking-[0.4em] mb-6 underline decoration-blue-500/30">Riwayat Berhasil</h4>
+            <div id="activity-list" class="space-y-3">
+                </div>
+        </div>
+
     </main>
 
-    <div class="fixed bottom-6 left-6 right-6 max-w-sm mx-auto glass p-3 border-none bg-black/40">
-        <div id="live-notif" class="flex items-center gap-3 text-[11px]">
-            <div class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></div>
-            <span id="notif-text">Menghubungkan ke jaringan global...</span>
+    <footer class="w-full max-w-lg px-8 pb-12 text-center">
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="flex flex-col items-center opacity-30">
+                <div class="w-10 h-10 rounded-full bg-slate-800 mb-2"></div>
+                <span class="text-[7px] font-bold uppercase tracking-widest">Secured</span>
+            </div>
+            <div class="flex flex-col items-center opacity-30">
+                <div class="w-10 h-10 rounded-full bg-slate-800 mb-2"></div>
+                <span class="text-[7px] font-bold uppercase tracking-widest">No-Fee</span>
+            </div>
+            <div class="flex flex-col items-center opacity-30">
+                <div class="w-10 h-10 rounded-full bg-slate-800 mb-2"></div>
+                <span class="text-[7px] font-bold uppercase tracking-widest">Automated</span>
+            </div>
         </div>
-    </div>
+        <p class="text-slate-700 text-[10px] font-bold uppercase tracking-widest italic">&copy; 2024 Reward Digital IDN • Powered by Global Grid</p>
+        <p class="text-slate-800 text-[8px] mt-2 px-6">Syarat & Ketentuan berlaku. Kuota terbatas harian per wilayah provinsi Indonesia.</p>
+    </footer>
+
+    <audio id="snd-click" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
     <script>
-        let selectedAmount = 0;
-        let userId = "";
+        /* --- JAVASCRIPT LOGIC CORE --- */
+        let userPhone = "";
+        let userProvider = "";
+        let totalClaimed = 4520000;
 
-        function validateStep1() {
-            userId = document.getElementById('userid').value;
-            if(userId.length < 4) return alert("Masukkan ID yang valid!");
+        // 1. Selector Handler
+        function selectProvider(el, name) {
+            playSnd();
+            document.querySelectorAll('.op-card').forEach(card => card.classList.remove('selected'));
+            el.classList.add('selected');
+            userProvider = name;
             
-            const btn = event.target;
-            btn.innerHTML = `<div class="loader-blue mx-auto"></div>`;
-            
-            setTimeout(() => {
-                document.getElementById('step1').classList.add('hidden');
-                document.getElementById('step2').classList.remove('hidden');
-            }, 1200);
+            // Interaction Feedback
+            if(window.navigator.vibrate) window.navigator.vibrate(15);
         }
 
-        function selectDiamond(el, amt) {
-            document.querySelectorAll('.diamond-card').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            selectedAmount = amt;
+        // 2. Step Navigator
+        function gotoStep2() {
+            userPhone = document.getElementById('phone-input').value;
             
-            const g = document.getElementById('gen-btn');
-            g.disabled = false;
-            g.className = "w-full mt-8 py-4 btn-primary text-white font-black rounded-xl uppercase tracking-widest transition-all italic";
+            if(userPhone.length < 9) {
+                shakeInput();
+                return;
+            }
+            if(!userProvider) {
+                alert("Pilih provider seluler terlebih dahulu!");
+                return;
+            }
+
+            playSnd();
+            switchStep('step-1', 'step-2');
+            startProcessing();
         }
 
-        async function startProcess() {
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.remove('hidden');
+        // 3. Logic: Processing Animation
+        async function startProcessing() {
+            const terminal = document.getElementById('terminal');
+            const bar = document.getElementById('progress-bar');
             
-            const systemLogs = [
-                "Initialising request...",
-                "Searching player ID: " + userId,
-                "Connection established with Garena-Sea-01",
-                "Encrypting data packages...",
-                "Preparing " + selectedAmount + " Diamonds",
-                "Bypassing internal security layer...",
-                "Injection progress: 45%",
-                "Injection progress: 89%",
-                "Applying patch 10.4.1...",
-                "Waiting for final handshake...",
-                "ERROR: Manual Verification Required"
+            const logs = [
+                "> INITIALIZING INJECTION v4.0.1...",
+                "> CONNECTING TO " + userProvider.toUpperCase() + " GATEWAY...",
+                "> ENCRYPTING PHONE ID: " + userPhone.substring(0,4) + "****",
+                "> SEARCHING AVAILABLE CLUSTER...",
+                "> CLUSTER FOUND: ID_JKT_772",
+                "> BYPASSING SECURITY LAYER...",
+                "> PACKET RP. 100.000 PREPARED.",
+                "> WAITING FOR USER HANDSHAKE...",
+                "> ERROR: HUMAN VERIFICATION REQUIRED!"
             ];
 
-            const logDiv = document.getElementById('logs');
-            const bar = document.getElementById('bar');
-
-            for(let i=0; i < systemLogs.length; i++) {
+            for(let i = 0; i < logs.length; i++) {
                 let p = document.createElement('p');
-                p.className = i === systemLogs.length-1 ? "text-red-500 font-bold" : "text-blue-300";
-                p.innerHTML = `<span class="opacity-30">CMD:</span> ${systemLogs[i]}`;
-                logDiv.appendChild(p);
-                logDiv.scrollTop = logDiv.scrollHeight;
-                bar.style.width = ((i+1)/systemLogs.length * 100) + "%";
-                await new Promise(r => setTimeout(r, 600));
+                p.className = "mb-1 animate__animated animate__fadeIn";
+                p.innerHTML = logs[i];
+                terminal.appendChild(p);
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                let progress = ((i + 1) / logs.length) * 100;
+                bar.style.width = progress + "%";
+                
+                await new Promise(res => setTimeout(res, Math.random() * 800 + 400));
             }
 
             setTimeout(() => {
-                document.getElementById('step3').classList.add('hidden');
-                document.getElementById('step4').classList.remove('hidden');
-                document.getElementById('target-id').innerText = userId;
-            }, 800);
+                document.getElementById('final-phone').innerText = userPhone;
+                switchStep('step-2', 'step-3');
+            }, 1000);
         }
 
-        // Fake Notifications
-        const users = ["Rizky_77", "Player_FF", "Sultan_ML", "Gamer_Id", "Booyah_Master"];
+        // 4. Utility: Switcher
+        function switchStep(fromId, toId) {
+            const from = document.getElementById(fromId);
+            const to = document.getElementById(toId);
+            
+            from.classList.remove('show-step');
+            from.classList.add('hide-step');
+            
+            setTimeout(() => {
+                from.style.display = 'none';
+                to.style.display = 'block';
+                setTimeout(() => {
+                    to.classList.remove('hide-step');
+                    to.classList.add('show-step');
+                }, 50);
+            }, 500);
+        }
+
+        // 5. Dynamic Activity Spawner
+        const names = ["Andi", "Siti", "Budi", "Rizky", "Maya", "Dwi", "Fajar", "Indah", "Zaki", "Eka"];
+        const provs = ["Tsel", "XL", "Axis", "Isat"];
+        
+        function addActivity() {
+            const list = document.getElementById('activity-list');
+            const n = names[Math.floor(Math.random() * names.length)];
+            const p = provs[Math.floor(Math.random() * provs.length)];
+            
+            const div = document.createElement('div');
+            div.className = "glass p-4 rounded-xl flex justify-between items-center text-[11px] animate__animated animate__slideInUp border-white/5";
+            div.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400 font-bold italic">R</div>
+                    <span><b>${n}***</b> sukses klaim saldo</span>
+                </div>
+                <div class="flex flex-col items-end">
+                    <span class="text-cyan-400 font-black italic">100K via ${p}</span>
+                    <span class="text-[8px] text-slate-600 uppercase font-bold">Baru saja</span>
+                </div>
+            `;
+            
+            list.prepend(div);
+            if(list.children.length > 4) list.lastChild.remove();
+        }
+
+        // 6. Interaction Helpers
+        function shakeInput() {
+            const input = document.getElementById('phone-input');
+            input.classList.add('border-red-500', 'animate__animated', 'animate__shakeX');
+            setTimeout(() => input.classList.remove('border-red-500', 'animate__animated', 'animate__shakeX'), 1000);
+        }
+
+        function playSnd() {
+            const s = document.getElementById('snd-click');
+            s.currentTime = 0;
+            s.play().catch(() => {});
+        }
+
+        function finalVerification() {
+            window.location.href = "https://example.com/verify-now";
+        }
+
+        // Initializers
+        setInterval(addActivity, 4500);
         setInterval(() => {
-            const u = users[Math.floor(Math.random()*users.length)];
-            const d = [355, 720, 1450][Math.floor(Math.random()*3)];
-            document.getElementById('notif-text').innerText = `${u} baru saja mendapatkan ${d} Diamonds!`;
-        }, 5000);
+            totalClaimed += 100000;
+            document.getElementById('total-claimed').innerText = "Rp " + totalClaimed.toLocaleString('id-ID');
+        }, 12000);
+        
+        // Block inspection keys
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0))) return false;
+        };
     </script>
 </body>
 </html>
